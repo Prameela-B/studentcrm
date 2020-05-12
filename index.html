@@ -1,0 +1,321 @@
+<html>
+
+<head>
+    <title>AngularJS First Application</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css"
+        crossorigin="anonymous">
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"
+        crossorigin="anonymous"></script>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+
+<body ng-app="myapp" ng-controller="StudentController">
+    <div ng-app="myapp" class="container-fluid">
+
+
+    </div>
+    <div class="container container-fluid">
+
+
+        <div class="row" style="height:100px;padding-top:50px;border:0px solid brown">
+            <!-- <h3>Welcome {{helloTo.title}} !</h3>  -->
+
+            <h4>Student CRUD Application. </h4>
+            
+        </div>
+        <div class="row col">
+            <input type="button" class="btn btn-primary" ng-click="getFlag()" value="New Student" ng-show="!vmflag">&nbsp;&nbsp;
+            <input class="btn btn-primary" type="button" ng-click="reset()" value="Reset" />
+        </div>
+        <div class="row col"><br></div>
+
+
+
+
+        <div class="row" style="background-color:white;">
+
+            <table class="table table-striped"  >
+                <thead class="thead-dark">
+                    <th>ID</th>
+                    <!-- <th>UserID</th> -->
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>DOB</th>
+                    <th>Joining Date</th>
+                    <th>Stream</th>
+                    <th>Semester</th>
+                    <th>Action</th>
+                </thead>
+                <tr ng-repeat="user in userList;" ng-init="userListI">
+                    <td>{{$index+1}}</td>
+                    <!-- <td>{{user.uid}}</td> -->
+                    <td><span ng-hide="editing">{{user.firstName}}</span>
+                        <span ng-show="editing"><input type="text" class="input-group" ng-model="user.firstName"></span>
+                    </td>
+                    <td><span ng-hide="editing">{{user.lastName}}</span>
+                        <span ng-show="editing"><input type="text" class="input-group" ng-model="user.lastName"></span>
+                    </td>
+                    <td><span ng-hide="editing">{{user.dob | date:'dd/MM/yyyy'}}</span>
+                        <span ng-show="editing"><input type="date" id="dobDt" name="user.dob" class="input-group"
+                            format-date    placeholder="dd/MM/yyyy" ng-model="user.dob">
+                        </span>
+                    </td>
+                    <td><span ng-hide="editing">{{user.joinDate | date:'dd/MM/yyyy'}}</span>
+                        <span ng-show="editing"><input type="date" id="joinDt" name="user.joinDate" class="input-group"
+                            format-date   placeholder="dd/MM/yyyy" ng-model="user.joinDate"  >
+                        </span>
+                    </td>
+                    <td><span ng-hide="editing">{{user.stream}}</span>
+                        <span ng-show="editing">
+                            <select class="input-group" name="stream" ng-model="user.stream" > 
+                                <option ng-repeat="str in streams" [value]="user.stream"
+                               ng-selected="{{angular.equals(str,user.stream)}}">{{str}}</option>
+                            </select>
+                        </span>
+                    </td>
+                    <td><span ng-hide="editing">{{user.semester}}</span>
+                        <span ng-show="editing">
+                            <select class="input-group" name="semester" ng-model="user.semester" style="width:100px;" > 
+                                <option ng-repeat="sem in semesters" [value]="user.semester"  
+                                ng-selected="{{angular.equals(sem,user.semester)}}">{{sem}}</option>
+                            </select>
+                        </span>
+                    </td>
+                    <td nowrap>
+                        <div class="form-group">
+                            <span class="glyphicon glyphicon-envelope"></span>
+                            <button class="button button-danger" ng-click="onDeleteUser($index)">Delete</button>
+                            <button class="button button-primary" href="" ng-hide="editing" ng-click="editing = !editing">Edit </button>
+                            <!-- <button ng-show="editing" data-ng-click="editing = false"
+                                                        class="glyphicon glyphicon-ok">Save</button> -->
+                            <button class="button button-success" type="submit" ng-show="editing" data-ng-click="editing = false"
+                                ng-click="update(user)">Save</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr ng-if="userList.length == 0">
+                    <td colspan="8" style="text-align:center;">... No Records ...</td>
+                </tr>
+            </table>
+        </div>
+        <hr>
+        <div class="form-group">
+
+            
+            <!-- <button ng-click="changeName()">{{firstName}}// {{fg}}</button> -->
+
+
+
+            <div ng-if="vmflag  == true">
+
+                <div class="row">
+                    <br>
+                    <h3>New Student Form:</h3>
+                
+                </div>
+
+                <div class="row">
+                    <div class="col form-control" width="250px">
+                        <div class="input-group">
+                            First Name: <input type="text" class="input-group" ng-model="user.firstName">
+                        </div>
+                        <div class="input-group">
+                            Last Name: <input type="text" class="input-group" ng-model="user.lastName">
+                        </div>
+                        <div class="input-group">
+                            Date of Birth: <input type="date" name="dobdt" class="datepicker input-group"
+                                placeholder="dd/MM/yyyy" ng-model="user.dob">
+                        </div>
+                        <div class="input-group">
+                            Join Date:
+                            <input type="date" name="joindt" class="datepicker input-group" 
+                            placeholder="dd/MM/yyyy" ng-model="user.joinDate">
+                        </div>
+                        <div class="input-group">
+                            Stream:
+                            <!--<input type="text" class="input-group" ng-model="user.stream"> -->
+                            <select class="input-group" name="stream" ng-Model="user.stream">
+                                <option ng-repeat="str in streams" [value]="str">
+                                    {{str}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            Semester:
+                            <select class="input-group" name="semester" ng-Model="user.semester">
+                                <option ng-repeat="str in semesters" [value]="str">
+                                    {{str}}
+                                </option>
+                            </select>
+                            <!-- <input type="text" class="input-group" ng-model="user.semester"> -->
+                        </div>
+                        <div class="input-group" style="padding-top:15px;"> 
+                            <button class="btn btn-primary " ng-click="saveStudent()">
+                                Save
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div ng-if="vmflag  == true">
+                <button class="btn btn-primary" ng-click="saveStudent()">
+                    Save
+                </button>
+            </div> -->
+        </div>
+
+    </div>
+
+    <script>
+        angular.module("myapp", [])
+
+            .controller("StudentController", ['$scope', '$http', '$filter', function ($scope, $http, $filter) {
+                $scope.helloTo = {};
+                $scope.helloTo.title = "AngularJS";
+
+                $scope.user = { name: 'Prameela' };
+                $scope.index = 1;
+                $scope.isVisibleFlag = false;
+                $scope.vmflag = false;
+                $scope.firstName = "John";
+                $scope.lastName = "Doe";
+                $scope.getFlag = function () {
+                    $scope.vmflag = !$scope.vmflag;
+                    // alert($scope.vmflag); 
+                }
+
+                // $(function () {
+
+                //     //for displaying datepicker
+
+                //     $('#datetimepicker').datetimepicker({
+                //         viewMode: 'years',
+                //         format: 'dd/MM/yyyy',
+                //     });
+
+                //     //for getting input value
+
+                //     $("#datetimepicker").on("dp.change", function () {
+
+                //         $scope.selecteddate = $("#datetimepicker").val();
+                //         alert("selected date is " + $scope.selecteddate);
+
+                //     });
+
+                // });
+
+                $scope.streams = ["CSE", "IT", "ECE", "MECHANICAL"];
+                $scope.semesters = ["SEM-I", "SEM-II", "SEM-III", "SEM-IV"];
+                //$scope.userList = [{firstName:string,lastName:string,dob:string,joinDate:string,stream:string,semester:string}];
+                $scope.userListI = [
+                    {
+                        // uid: '1',
+                        firstName: 'Ramesh',
+                        lastName: 'Sam',
+                        dob: new Date('10/31/2020'),
+                        joinDate:  new Date('12/31/1986'),
+                        stream: 'CSE',
+                        semester: 'SEM-II'
+                    },
+                    {
+                        //uid: '2',
+                        firstName: 'Veena',
+                        lastName: 'Paul',
+                        dob: new Date('12/11/1999'),
+                        joinDate: new Date('9/11/2006'),
+                        stream: 'CSE',
+                        semester: 'SEM-II'
+                    }
+                    ,
+                    {
+                        //uid: '3',
+                        firstName: 'Lia',
+                        lastName: 'James',
+                        dob: new Date('05/11/1980'),
+                        joinDate: new Date('03/05/2020'),
+                        stream: 'ECE',
+                        semester: 'SEM-III'
+                    },
+                    {
+                        //uid: '4',
+                        firstName: 'Peter',
+                        lastName: 'Li',
+                        dob: new Date('07/14/1986'),
+                        joinDate: new Date('03/10/1999'),
+                        stream: 'CSE',
+                        semester: 'SEM-II'
+                    }
+                ];
+                $scope.userList=$scope.userListI;
+                $scope.master = {};
+                $scope.master = $scope.userList;
+
+                $scope.saveStudent = function () {
+                    // $scope.user.push(user);
+                    var studentObject;
+                    studentObject = $scope.user;
+                    $scope.userList.push(studentObject);
+                    $scope.vmflag = !$scope.vmflag;
+                    return $scope.userList;
+                }
+                $scope.onDeleteUser = function (index) {
+                     //alert("Delete item:"+index); 
+                     
+
+                  //  var index = $scope.userList.indexOf(item);
+                    $scope.userList.splice(index, 1);
+                    //alert("Delete :\n item :"+index+"\n index:"+index);
+                    return $scope.userList;
+                }
+
+               
+
+                $scope.update = function (user) {
+                   // alert("update!!")
+                    $scope.userList = angular.copy(user);
+                };
+
+                $scope.reset = function () {
+                    location.reload(); 
+                };
+
+               // $scope.reset();
+            }]);
+
+
+    </script>
+
+</body>
+
+</html>
